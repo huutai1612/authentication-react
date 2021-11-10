@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import useHttp, { SIGN_UP, SIGN_IN } from '../../hooks/use-http';
+import useHttp from '../../hooks/use-http';
 
 import classes from './AuthForm.module.css';
 
@@ -24,6 +24,8 @@ const AuthForm = () => {
 	const submitHandler = (event) => {
 		event.preventDefault();
 		setIsLoading(true);
+		let url = '';
+
 		const formData = {
 			email: emailInputRef.current.value,
 			password: passwordInputRef.current.value,
@@ -40,44 +42,39 @@ const AuthForm = () => {
 		}
 
 		if (isLogin) {
-			const option = {
-				method: `POST`,
-				body: JSON.stringify(formData),
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			};
-			sendRequest({ type: SIGN_IN, option }).then((dataResponse) => {
-				setIsLoading(false);
-				if (dataResponse && dataResponse.error && dataResponse.error.message) {
-					// show error
-					alert(dataResponse.error.message);
-				} else {
-					console.log(dataResponse);
-				}
-			});
+			url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCYgRd8jQ0QeSi3hwCZHJuWsfI-xex62Z4`;
 		} else {
-			const option = {
-				method: `POST`,
-				body: JSON.stringify(formData),
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			};
-			sendRequest({ type: SIGN_UP, option }).then((dataResponse) => {
+			url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCYgRd8jQ0QeSi3hwCZHJuWsfI-xex62Z4`;
+		}
+
+		const option = {
+			method: `POST`,
+			body: JSON.stringify(formData),
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		};
+		sendRequest({ url, option })
+			.then((response) => {
 				setIsLoading(false);
 				/*This is all possible option we can use to check conditions
-        if don't have error dataResponse.error and dataResponse.error.message will be undefined */
-				if (dataResponse && dataResponse.error && dataResponse.error.message) {
+      if don't have error dataResponse.error and dataResponse.error.message will be undefined */
+				if (response && response.error && response.error.message) {
 					// show error
-					alert(dataResponse.error.message);
+					throw new Error(response.error.message);
+				}
+				return response;
+			})
+			.then((data) => {
+				if (isLogin) {
+					console.log(data);
 				} else {
 					setIsLogin((prevState) => !prevState);
 					emailInputRef.current.value = '';
 					passwordInputRef.current.value = '';
 				}
-			});
-		}
+			})
+			.catch((error) => alert(error.message));
 	};
 
 	return (
