@@ -12,7 +12,7 @@ const AuthContextProvider = (props) => {
 
 	const contextValue = {
 		token,
-		isUserLoggedIn,
+		isLogin: isUserLoggedIn,
 		login,
 		logout,
 	};

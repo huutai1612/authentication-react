@@ -72,7 +72,6 @@ const AuthForm = () => {
 			})
 			.then((data) => {
 				if (isLogin) {
-					console.log(data.idToken);
 					authContext.login(data.idToken);
 					history.push('/');
 				} else {
@@ -81,7 +80,11 @@ const AuthForm = () => {
 					passwordInputRef.current.value = '';
 				}
 			})
-			.catch((error) => alert(error.message));
+			.catch((error) => {
+				alert(error.message);
+				emailInputRef.current.value = '';
+				passwordInputRef.current.value = '';
+			});
 	};
 
 	return (
