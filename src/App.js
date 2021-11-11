@@ -22,11 +22,10 @@ function App() {
 						<AuthPage />
 					</Route>
 				)}
-				{authContext.isLogin && (
-					<Route path='/profile'>
-						<UserProfile />
-					</Route>
-				)}
+				<Route path='/profile'>
+					{authContext.isLogin && <UserProfile />}
+					{!authContext.isLogin && <Redirect to='/' />}
+				</Route>
 				<Route path='*'>
 					<Redirect to='/' />
 				</Route>
