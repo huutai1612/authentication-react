@@ -57,7 +57,7 @@ const ProfileForm = () => {
 			<div className={classes.control}>
 				<label htmlFor='new-password'>New Password</label>
 				<input
-					minLength='7'
+					minLength='6'
 					ref={passwordInputRef}
 					type='password'
 					id='new-password'
