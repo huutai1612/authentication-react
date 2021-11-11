@@ -72,7 +72,11 @@ const AuthForm = () => {
 			})
 			.then((data) => {
 				if (isLogin) {
-					authContext.login(data.idToken);
+					const expirationTime = new Date(
+						new Date().getTime() + +data.expiresIn * 1000,
+					);
+
+					authContext.login(data.idToken, expirationTime.toISOString());
 					history.push('/');
 				} else {
 					setIsLogin((prevState) => !prevState);
