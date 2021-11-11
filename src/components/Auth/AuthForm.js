@@ -1,5 +1,8 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useContext } from 'react';
+import { useHistory } from 'react-router-dom';
+
 import useHttp from '../../hooks/use-http';
+import AuthContext from '../../store/auth-context';
 
 import classes from './AuthForm.module.css';
 
@@ -15,6 +18,8 @@ const AuthForm = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const emailInputRef = useRef();
 	const passwordInputRef = useRef();
+	const authContext = useContext(AuthContext);
+	const history = useHistory();
 	const sendRequest = useHttp;
 
 	const switchAuthModeHandler = () => {
@@ -58,7 +63,7 @@ const AuthForm = () => {
 			.then((response) => {
 				setIsLoading(false);
 				/*This is all possible option we can use to check conditions
-      if don't have error dataResponse.error and dataResponse.error.message will be undefined */
+      			if don't have error dataResponse.error and dataResponse.error.message will be undefined */
 				if (response && response.error && response.error.message) {
 					// show error
 					throw new Error(response.error.message);
@@ -67,7 +72,9 @@ const AuthForm = () => {
 			})
 			.then((data) => {
 				if (isLogin) {
-					console.log(data);
+					console.log(data.idToken);
+					authContext.login(data.idToken);
+					history.push('/');
 				} else {
 					setIsLogin((prevState) => !prevState);
 					emailInputRef.current.value = '';
